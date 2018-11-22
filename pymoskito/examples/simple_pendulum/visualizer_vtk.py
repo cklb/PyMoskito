@@ -448,4 +448,5 @@ class TwoPendulumVisualizer(pm.VtkVisualizer):
         """
         self.set_body_state(self.calc_positions(x))
 
+
 pm.register_visualizer(TwoPendulumVisualizer)

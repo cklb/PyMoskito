@@ -1,7 +1,8 @@
 from abc import ABCMeta, abstractmethod
+from scipy.interpolate import interp1d
 
 from matplotlib.backends.backend_qt5agg import (
-    NavigationToolbar2QT, FigureCanvasQTAgg as FigureCanvas)
+    FigureCanvasQTAgg as FigureCanvas)
 from matplotlib.figure import Figure
 
 __all__ = ["VtkVisualizer", "MplVisualizer"]
@@ -34,13 +35,67 @@ class Visualizer(metaclass=ABCMeta):
     """
 
     def __init__(self):
+        self._data = None
+        self._state_interp = None
+        # self._input_interp = None
+
         self.can_reset_view = False
+
+    @staticmethod
+    def _build_interpolator(t_values, data):
+        interp = interp1d(t_values,
+                          data,
+                          axis=0,
+                          bounds_error=False,
+                          fill_value=(data[0], data[-1]))
+        return interp
+
+    def update_simulation_data(self, data):
+        """
+        Update internal interpolators.
+
+        Overwrite this method and add all attributes that are needed for porper
+        visualization.
+
+        Args:
+            data(dict): Simulation results.
+
+        """
+        self._data = data
+        t_values = data["results"]["time"]
+        self._state_interp = self._build_interpolator(
+            t_values, data["results"]["Solver"])
+        # self._input_interp = self._build_interpolator(
+        #     t_values, data["results"]["ModelMixer"])
+
+    def update_time_frame(self, t):
+        """
+        Update the current visualization time.
+
+        This method is called by the GUI if a new time frame has to be
+        visualized.
+
+        Args:
+            t(float): Current simulation time.
+
+        """
+        q = self._state_interp(t)
+        # u = self._input_interp(t)
+
+        self.update_scene(q)
 
     @abstractmethod
     def update_scene(self, x):
         """
-        Hook to update the current visualization state
-        :param x: system state vector
+        Update the visualization.
+
+        This is a simple version which gets called every time the simulation
+        time frame changes. If access to more results is needed, replace
+        `update_time_frame`.
+
+        Args:
+            x(array): Current model state.
+
         """
         pass
 

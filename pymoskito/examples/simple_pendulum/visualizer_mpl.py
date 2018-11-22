@@ -88,4 +88,3 @@ class MplPendulumVisualizer(pm.MplVisualizer):
         # update canvas
         self.canvas.draw()
 
-

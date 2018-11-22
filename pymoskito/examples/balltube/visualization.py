@@ -169,4 +169,5 @@ class MplBallInTubeVisualizer(pm.MplVisualizer):
         self.ball.center = (0, x[2] + st.d_R*st.scale/2.0)
         self.canvas.draw()
 
+
 pm.register_visualizer(MplBallInTubeVisualizer)

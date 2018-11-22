@@ -560,4 +560,5 @@ class MplTwoPendulumVisualizer(pm.MplVisualizer):
         self.short_pendulum_weight.set_transform(t_phi2)
         self.canvas.draw()
 
+
 pm.register_visualizer(MplTwoPendulumVisualizer)
