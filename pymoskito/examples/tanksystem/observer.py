@@ -34,8 +34,8 @@ class CppHighGainObserver(pm.Observer, pm.CppBase):
 
         pm.Observer.__init__(self, settings)
         pm.CppBase.__init__(self,
-                            module_name='HighGainObserver',
                             module_path=m_path,
+                            module_name='HighGainObserver',
                             binding_class_name="binding_HighGainObserver")
 
         self.obs = self.get_class_from_module().HighGainObserver(self._settings["AT"],

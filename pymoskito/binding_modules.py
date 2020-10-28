@@ -11,6 +11,7 @@ from PyQt5.QtCore import QObject
 __all__ = ["CppBase"]
 
 BUILD_DIR = "_build"
+CMAKE_LISTS = "CMakeLists.txt"
 
 
 class BindingException(Exception):
@@ -21,7 +22,26 @@ class BindingException(Exception):
 
 
 class CppBase(QObject):
-    def __init__(self, module_name=None, module_path=None, binding_class_name=None):
+    """
+    Mix-in class for modules written in C++.
+
+    This class uses pybind and cmake to automatically compile and link the
+    provided sources and load them as an python module.
+
+    Args:
+        :module_path: Path to directory that contains the sources.
+        :module_name: Name of the cpp class to use
+
+    Warn:
+        The `module_name` will be used to generate the cmake configuration an,
+        thus, expects ${module_name}.cpp and ${module_name}.h files.
+        *Every other file* is ignored by this routine so far.
+
+    """
+    def __init__(self,
+                 module_path=None,
+                 module_name=None,
+                 binding_class_name=None):
         QObject.__init__(self, None)
         self._logger = logging.getLogger(self.__class__.__name__)
 
@@ -43,21 +63,20 @@ class CppBase(QObject):
                                " module_path is not allowed!")
             raise BindingException("Instantiation of binding class without"
                                    " module_path is not allowed!")
+        self.module_path = Path(module_path)
+        self.module_stem = self.module_path / self.module_name
+        self.module_inc_path = self.module_stem.with_suffix(".h")
+        self.module_src_path = self.module_stem.with_suffix(".cpp")
+        self.cmake_lists_path = self.module_path / CMAKE_LISTS
+        self.module_build_path = self.module_path / BUILD_DIR
+        self.module_lib_path = (self.module_build_path
+                                / self.module_name).with_suffix(self.sfx)
 
         if binding_class_name is None:
             self._logger.error("Instantiation of binding class without"
                                " binding_class_name is not allowed!")
             raise BindingException("Instantiation of binding class without"
                                    " binding_class_name is not allowed!")
-
-        self.module_path = Path(module_path)
-        self.module_stem = self.module_path / self.module_name
-        self.module_inc_path = self.module_stem.with_suffix(".h")
-        self.module_src_path = self.module_stem.with_suffix(".cpp")
-        self.cmake_lists_path = self.module_path / "CMakeLists.txt"
-        self.module_build_path = self.module_path / BUILD_DIR
-        self.module_lib_path = (self.module_build_path
-                                / self.module_name).with_suffix(self.sfx)
         self.binding_class_name = binding_class_name
 
         if self.create_binding_config():
@@ -134,7 +153,8 @@ class CppBase(QObject):
             rerun.
         """
         config_line = "add_library({} SHARED {} {})\n".format(
-            self.module_name, self.module_src_path.as_posix(),
+            self.module_name,
+            self.module_src_path.as_posix(),
             self.binding_class_name + '.cpp'
         )
         config_line += "set_target_properties({} PROPERTIES PREFIX \"\" OUTPUT_NAME \"{}\" SUFFIX \"{}\")\n".format(

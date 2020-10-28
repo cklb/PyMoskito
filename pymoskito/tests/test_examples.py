@@ -24,7 +24,7 @@ class TestExamples(unittest.TestCase):
         self._test_example("car", debug=False)
 
     def test_tanksystem(self):
-        self._test_example("tanksystem", debug=False)
+        self._test_example("tanksystem", debug=True)
 
     def _test_example(self, name: str, debug=False):
         """
