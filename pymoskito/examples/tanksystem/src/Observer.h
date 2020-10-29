@@ -14,6 +14,8 @@ class Observer {
 protected:
     double dSampleTime = 0.0;       ///< Sample time in \f \si{\milli\second} \f
 public:
+    virtual ~Observer() = default;
+
     /**
      * Sets the initial state.
      * @param dInitialState vector with two starting values for the water levels of tank 1 and 2

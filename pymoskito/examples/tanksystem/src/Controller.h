@@ -21,6 +21,8 @@ protected:
     double dSampleTime = 0.0;       ///< Sample time in \f \si{\milli\second} \f
     double dOut = 0.0;              ///< Calculated controller value
 public:
+    virtual ~Controller() = default;
+
     /**
      * @brief Method the computes the controller output of the current time step for the given input value and setpoint
      *

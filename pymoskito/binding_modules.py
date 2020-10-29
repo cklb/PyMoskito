@@ -11,6 +11,7 @@ from PyQt5.QtCore import QObject
 __all__ = ["CppBase"]
 
 BUILD_DIR = "_build"
+LIB_DIR = "_lib"
 CMAKE_LISTS = "CMakeLists.txt"
 
 
@@ -31,6 +32,7 @@ class CppBase(QObject):
     Args:
         :module_path: Path to directory that contains the sources.
         :module_name: Name of the cpp class to use
+        :binding_class_name: Name of the file including the binding defintion
 
     Warn:
         The `module_name` will be used to generate the cmake configuration an,
@@ -69,8 +71,7 @@ class CppBase(QObject):
         self.module_src_path = self.module_stem.with_suffix(".cpp")
         self.cmake_lists_path = self.module_path / CMAKE_LISTS
         self.module_build_path = self.module_path / BUILD_DIR
-        self.module_lib_path = (self.module_build_path
-                                / self.module_name).with_suffix(self.sfx)
+        self.module_lib_path = self.module_path / LIB_DIR
 
         if binding_class_name is None:
             self._logger.error("Instantiation of binding class without"
@@ -168,7 +169,7 @@ class CppBase(QObject):
         config_line += "install(FILES {}/{} DESTINATION {})".format(
             BUILD_DIR,
             self.module_name + self.sfx,
-            self.module_build_path
+            self.module_lib_path
         )
         with open(self.cmake_lists_path, "r") as f:
             if config_line in f.read():
@@ -220,8 +221,9 @@ class CppBase(QObject):
 
     def get_class_from_module(self):
         try:
-            spec = importlib.util.spec_from_file_location(self.module_name,
-                                                          self.module_lib_path)
+            spec = importlib.util.spec_from_file_location(
+                self.module_name,
+                (self.module_lib_path / self.module_name).with_suffix(self.sfx))
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
             return module
