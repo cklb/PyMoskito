@@ -82,7 +82,7 @@ class CppBase(QObject):
 
         if self.create_binding_config():
             self.build_binding()
-            # self.install_binding()
+            self.install_binding()
 
     def create_binding_config(self):
         # check if folder exists
