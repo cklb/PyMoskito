@@ -30,7 +30,7 @@ class OpenLoop(pm.Controller):
         return np.array(u)
 
 
-class CppPIDController(pm.Controller, pm.CppBase):
+class CppPIDController(pm.CppBase, pm.Controller):
     """
     PID Controller implemented in cpp with pybind11
     """

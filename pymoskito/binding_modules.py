@@ -6,8 +6,6 @@ import subprocess
 from pathlib import Path
 import importlib.util
 
-from PyQt5.QtCore import QObject
-
 __all__ = ["CppBase"]
 
 BUILD_DIR = "_build"
@@ -22,7 +20,7 @@ class BindingException(Exception):
     pass
 
 
-class CppBase(QObject):
+class CppBase:
     """
     Mix-in class for modules written in C++.
 
@@ -44,7 +42,6 @@ class CppBase(QObject):
                  module_path=None,
                  module_name=None,
                  binding_class_name=None):
-        QObject.__init__(self, None)
         self._logger = logging.getLogger(self.__class__.__name__)
 
         # adapt to os-specific extensions

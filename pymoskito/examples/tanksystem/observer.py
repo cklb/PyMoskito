@@ -9,7 +9,7 @@ import pymoskito as pm
 from . import settings as st
 
 
-class CppHighGainObserver(pm.Observer, pm.CppBase):
+class CppHighGainObserver(pm.CppBase, pm.Observer):
     """
     High Gain Observer implemented in cpp with pybind11
     """
