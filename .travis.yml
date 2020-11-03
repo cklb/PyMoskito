@@ -27,7 +27,7 @@ addons:
 install:
 - pip install --upgrade pip
 - pip install -r requirements.txt
-- pip install ".[CPP, tests]"
+- pip install ".[CPP, test]"
 
 script:
 - python -m unittest -v -b
