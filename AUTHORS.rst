@@ -14,3 +14,4 @@ Contributors
 * Marcus Riesmeier
 * Jonas Hoffmann
 * Jens Wurm
+* Simon Bachler

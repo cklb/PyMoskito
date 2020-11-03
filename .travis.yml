@@ -6,7 +6,7 @@ matrix:
   - python: '3.6'
   - python: '3.7'
   - python: '3.8'
-  - python: '3.9'
+#  - python: '3.9'
 
 services:
   - xvfb
@@ -23,6 +23,7 @@ addons:
       - libxcb-randr0
       - libxcb-render-util0
       - libxcb-xinerama0
+      - cmake
 
 install:
 - pip install --upgrade pip
